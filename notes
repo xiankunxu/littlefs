@@ -1,0 +1,5 @@
+1. cfg->inline_max indicates the maxmum data size can be inlined along with the metadata (tags). When data size exceeds this size, data will be wrote to a separate block while the metadata still in the metadata block. There should be at least N+1+2 flash blocks for N files: two for the metadata block, N+1 for the actual data block, the extra one in the N+1 is for swap data block. Note cfg->inline_max should be <= cfg->cache_size.
+
+2. As long as a file uses a separate block to store its data. Every time when write or append to this file, littlefs will use a new block to store the new data instead of appending to the old data. Eventhough there is plenty of free space in the old data block. For write, it will write to the new block. For append, it will copy the old data along with the new data to the new block. Which is not efficient.
+
+TO SAVE SPACE AND BE EFFICIENT, set cfg->inline_max to a value that is larger than all possible data size that want to save. Note cfg->inline_max should be smaller than cfg->cache_size. Where cache_size is the maximum size of the cache memory available for storing data. It should be multiple of read_size and prog_size.
